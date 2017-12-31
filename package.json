@@ -1,0 +1,25 @@
+{
+  "name": "AnswerBook",
+  "version": "0.0.1",
+  "description": "Q & A forum for organizations",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \" Error: no test specified\" && exit 1",
+    "start": "node app"
+  },
+  "dependencies": {
+    "bcryptjs": "*",
+    "body-parser": "*",
+    "cors": "*",
+    "express": "*",
+    "jsonwebtoken": "*",
+    "mongoose": "^5.0.0-rc0",
+    "passport": "*",
+    "passport-jwt": "*",
+    "pg": "^7.4.0",
+    "pg-format": "^1.0.4",
+    "sequelize": "^4.28.6"
+  },
+  "author": "Sanjay, Varun, Shivanee, Aravind, Palani, Sugadev",
+  "license": "ISC"
+}
