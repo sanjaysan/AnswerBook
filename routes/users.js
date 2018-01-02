@@ -70,7 +70,7 @@ router.post('/authenticate', function (req, res) {
       if (isMatch) {
         // User will be logged out after 10 minutes
         const token = jwt.sign({user: user.username}, config.secret, {
-          expiresIn: 604800
+          expiresIn: 600
         });
 
         // Sending the user details in the response
