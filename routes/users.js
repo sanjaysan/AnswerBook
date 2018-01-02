@@ -76,7 +76,7 @@ router.post('/authenticate', function (req, res) {
         // Sending the user details in the response
         res.json({
           success: true,
-          token: 'JWT ' + token,
+          token: token,
           user: {
             id: user.id,
             firstName: user.firstName,
