@@ -15,7 +15,7 @@
     "jsonwebtoken": "*",
     "mongoose": "^5.0.0-rc0",
     "passport": "*",
-    "passport-jwt": "*",
+    "passport-jwt": "^3.0.1",
     "pg": "^7.4.0",
     "pg-format": "^1.0.4",
     "sequelize": "^4.28.6"
