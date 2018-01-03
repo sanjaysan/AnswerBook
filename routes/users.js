@@ -93,15 +93,6 @@ router.post('/authenticate', function (req, res) {
   })
 });
 
-getToken = function (headers) {
-  if (headers && headers.authorization) {
-    return headers.authorization;
-  }
-  else {
-    return null;
-  }
-};
-
 // Dashboard route is protected using the json web token
 // The authenticate method in passport invokes the
 // JwtStrategy method in passport.js, authenticates the
