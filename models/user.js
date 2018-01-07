@@ -1,56 +1,68 @@
 const bcrypt = require('bcryptjs');
-const Sequelize = require('sequelize');
-const config = require('../config/database');
-
-const Op = Sequelize.Op;
-
-// Setting up database connection details
-const sequelize = new Sequelize(config.database, config.user, config.password, {
-  host: config.host,
-  dialect: 'postgres',
-  operatorsAliases: Op,
-
-  pool: {
-    max: 10,
-    min: 0,
-    acquire: 30000,
-    idle: 30000
-  }
-});
-
-// Logging into the database
-sequelize.authenticate().then(function () {
-  console.log('Connected to database ' + config.database)
-}).catch(function (err) {
-  console.error('Unable to connect to the database:', err)
-});
+const db = require('./db');
+const Sequelize = db.Sequelize;
+const sequelize = db.sequelize;
 
 // Schema for the users table
 const userSchema = sequelize.define('users', {
-  id: {
-    type: Sequelize.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },
-  firstName: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  lastName: {
-    type: Sequelize.STRING
-  },
-  email: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  username: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  password: {
-    type: Sequelize.STRING,
-    allowNull: false
-  }
+    id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+
+    firstName: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+            isAlpha: true
+        }
+    },
+
+    lastName: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+            isAlpha: true
+        }
+    },
+
+    email: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+            isEmail: true
+        }
+    },
+
+    username: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+
+    password: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+
+
+    //USER RATING BASED ON QUESTIONS, ANSWERS, READY-LISTS
+
+    rating: {
+        type: Sequelize.INTEGER,
+        min: 0,
+        allowNull: true
+    },
+
+    //To decide what the user wishes to be displayed on profile
+    //0 is private mode. Only stats are shown not the exact details
+
+    mode: {
+
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
+        allowNull: true
+    }
 });
 
 // Exporting the schema to be used in

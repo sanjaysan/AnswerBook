@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const config = require('../config/database');
 const User = require('../models/user');
+const Question = require('../models/questions');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 
@@ -27,6 +28,7 @@ router.post('/register', function (req, res) {
     })
   })
 });
+
 
 // Search using id
 router.get('/:id([0-9]+)', function (req, res) {
@@ -102,4 +104,28 @@ router.get('/dashboard', passport.authenticate('jwt', {session: false}),
       res.json({user: req.user});
     });
 
-module.exports = router;
+//Method to add question. Gets user Id from passport authentication
+
+/*router.post('/question', passport.authenticate('jwt', {session: false}),
+
+    function (req, res) {
+
+        const newQuestion = {
+
+            content: req.content,
+            userId: req.user.id
+        };
+
+        Question.sync({force: false}).then(function () {
+            Question.addQuestion(newQuestion, function (err, question) {
+                if (err)
+                    res.json({success: false, msg: 'Failed to enter question'});
+                else
+                    res.json({success: true, msg: 'Question entered', questionDetails: question})
+            })
+        })
+
+
+    });
+
+module.exports = router;*/
