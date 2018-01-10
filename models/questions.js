@@ -1,51 +1,26 @@
-const db = require('./db');
-const User = require('./user');
-const Sequelize = db.Sequelize;
-const sequelize = db.sequelize;
+module.exports = function (sequelize, DataTypes) {
 
-const questionSchema =  sequelize.define('questions', {
+    const questions = sequelize.define('questions', {
 
-    id: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+        },
 
-    content : {
+        content: {
 
-        type: Sequelize.TEXT,
-        allowNull: false
-    },
+            type: DataTypes.TEXT,
+            allowNull: false
+        },
 
-    upvotes: {
+        upvotes: {
 
-        type: Sequelize.INTEGER,
-        min: 0,
-        allowNull: true
-    },
-
-    user_Id: {
-
-        type: Sequelize.INTEGER,
-
-        references: {
-
-            model : User,
-            key : 'id'
+            type: DataTypes.INTEGER,
+            min: 0,
+            allowNull: true
         }
-    }
 
-});
-
-const Question = module.exports = questionSchema;
-
-//TO ADD A NEW QUESTION
-
-/*module.exports.addQuestion = function (newQuestion, callback) {
-
-    Question.create(newQuestion).then(function (question) {
-        // Going back to caller
-        return callback(err, question)
-    })
-};*/
-
+    });
+    return questions;
+};

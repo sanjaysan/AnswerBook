@@ -1,77 +1,87 @@
-const bcrypt = require('bcryptjs');
-const db = require('./db');
-const Sequelize = db.Sequelize;
-const sequelize = db.sequelize;
+module.exports = function (sequelize, DataTypes) {
 
-// Schema for the users table
-const userSchema = sequelize.define('users', {
-    id: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
+    const users = sequelize.define('users', {
 
-    firstName: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        validate: {
-            isAlpha: true
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+        },
+
+        firstName: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+
+        lastName: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+
+        email: {
+            type: DataTypes.STRING,
+            allowNull: false
+
+        },
+
+        username: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+
+        password: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+
+
+        //USER RATING BASED ON QUESTIONS, ANSWERS, READY-LISTS
+
+        rating: {
+            type: DataTypes.INTEGER,
+            min: 0,
+            allowNull: true
+        },
+
+        //To decide what the user wishes to be display on profile
+        //0 is private mode. Only stats are shown not the exact details
+
+        mode: {
+
+            type: DataTypes.INTEGER,
+            defaultValue: 0,
+            allowNull: true
         }
-    },
+    });
 
-    lastName: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        validate: {
-            isAlpha: true
-        }
-    },
+    function addUser(newUser, callback) {
+        bcrypt.genSalt(10, function (err, salt) {
+            if (err) throw err;
 
-    email: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        validate: {
-            isEmail: true
-        }
-    },
+            // Encrypting the password into {@code hash}
+            bcrypt.hash(newUser.password, salt, function (err, hash) {
+                if (err) throw err;
 
-    username: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
+                // Storing the hashed password in the user object
+                newUser.password = hash;
+                users.create(newUser).then(function (user) {
+                    // Going back to caller
+                    return callback(err, user)
+                })
 
-    password: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
+            })
+        })
+    };
+
+    return users;
+};
 
 
-    //USER RATING BASED ON QUESTIONS, ANSWERS, READY-LISTS
 
-    rating: {
-        type: Sequelize.INTEGER,
-        min: 0,
-        allowNull: true
-    },
-
-    //To decide what the user wishes to be displayed on profile
-    //0 is private mode. Only stats are shown not the exact details
-
-    mode: {
-
-        type: Sequelize.INTEGER,
-        defaultValue: 0,
-        allowNull: true
-    }
-});
-
-// Exporting the schema to be used in
-// other files
-const User = module.exports = userSchema;
-
+/*
 // Querying user by id
 module.exports.getUserById = function (id, callback) {
-  User.find({
+  users.find({
     where: {
       id: id
     }
@@ -84,7 +94,7 @@ module.exports.getUserById = function (id, callback) {
 
 // Querying user by username
 module.exports.getUserByUserName = function (username, callback) {
-  User.find({
+    users.find({
     where: {
       username: username
     }
@@ -97,7 +107,7 @@ module.exports.getUserByUserName = function (username, callback) {
 
 // Querying user by email
 module.exports.getUserByEmailID = function (email, callback) {
-  User.find({
+    users.find({
     where: {
       email: email
     }
@@ -119,7 +129,7 @@ module.exports.addUser = function (newUser, callback) {
 
       // Storing the hashed password in the user object
       newUser.password = hash;
-      User.create(newUser).then(function (user) {
+        users.create(newUser).then(function (user) {
         // Going back to caller
         return callback(err, user)
       })
@@ -174,3 +184,4 @@ module.exports.comparePassword = function (candidatePassword, hash, callback) {
 //
 // if (myClient)
 // 	module.exports = myClient;
+*/
