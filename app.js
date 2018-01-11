@@ -39,13 +39,13 @@ app.get('/', function (req, res) {
 });
 
 // Sync and start server
-db.sequelize.sync({force: true}).then(function() {
+db.sequelize.sync({force: false}).then(function() {
     app.listen(port, function() {
        console.log('Listening at port:', port);
     });
 });
 
-app.use(function(req, res, next) {
+/*app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
@@ -61,5 +61,6 @@ app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render('error');
 });
+*/
 
 module.exports = app;

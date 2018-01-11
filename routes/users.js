@@ -17,30 +17,15 @@ router.post('/register', function (req, res) {
         password: req.body.password
     };
 
-    /*OLDER METHOD USING ADDUSER Currently Not working as an instance method
+    //OLDER METHOD USING ADDUSER Currently Not working as an instance method
+
     db.user.addUser(newUser, function (err, user) {
         if (err)
             res.json({success: false, msg: 'Failed to register user'});
         else
             res.json({success: true, msg: 'User registered', userDetails: user})
-    });*/
+    });
 
-    bcrypt.genSalt(10, function (err, salt) {
-        if (err) throw err;
-
-        // Encrypting the password into {@code hash}
-        bcrypt.hash(newUser.password, salt, function (err, hash) {
-            if (err) throw err;
-
-            // Storing the hashed password in the user object
-            newUser.password = hash;
-            db.user.create(newUser).then(function (user) {
-                // Going back to caller
-                return res.json(user);
-            })
-
-        })
-    })
 
 });
 
@@ -52,8 +37,7 @@ router.post('/authenticate', function (req, res) {
     const username = req.body.username;
     const password = req.body.password;
 
-    /* Older method not working due to instance method not being accesible
-        Will check on it
+
     db.user.getUserByUserName(username, function (err, user) {
         if (err) throw err;
 
@@ -88,46 +72,8 @@ router.post('/authenticate', function (req, res) {
                 return res.json({success: false, msg: 'Wrong password'})
             }
         })
-    })*/
-
-    db.user.find({
-        where: {
-            username: username
-        }
-    }).then(function (user) {
-
-        bcrypt.compare(password,user.password, function (error, isMatch) {
-
-            if(error)
-                throw error;
-
-            if(isMatch)
-            {
-                const token = jwt.sign({user: user.username}, config.secret, {
-                    expiresIn: 6000
-                });
-
-                return res.json({
-                    success: true,
-                    token: token,
-                    user: {
-                        id: user.id,
-                        firstName: user.firstName,
-                        lastName: user.lastName,
-                        username: user.username,
-                        email: user.email
-                    }
-                })
-            }
-
-            else
-                return res.json({success: false, msg: 'Wrong password'})
-        })
-
-    }).catch(function (err) {
-
-        return res.json({success: false, msg: 'No such user'})
     })
+
 });
 
 // Authenticate
@@ -141,15 +87,9 @@ router.get('/dashboard', passport.authenticate('jwt', {session: false}),
         res.json({user: req.user});
     });
 
-
-
-module.exports = router;
-
-
-// Search using id
-/*
+//Search by ID
 router.get('/:id([0-9]+)', function (req, res) {
-    User.getUserById(req.params.id, function (err, user) {
+    db.user.getUserById(req.params.id, function (err, user) {
         if (err)
             res.json({msg: 'User information not available'});
         else
@@ -159,13 +99,16 @@ router.get('/:id([0-9]+)', function (req, res) {
 
 // Search using emailID
 router.get('/:email([A-Za-z0-9_.]+@[A-Za-z.]+)', function (req, res) {
-    User.getUserByEmailID(req.params.email, function (err, user) {
+    db.user.getUserByEmailID(req.params.email, function (err, user) {
         if (err)
             res.json({msg: 'User information not available'});
         else
             res.json({userDetails: user})
     })
 });
-*/
+
+module.exports = router;
+
+
 
 
