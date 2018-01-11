@@ -52,31 +52,11 @@ module.exports = function (sequelize, DataTypes) {
             defaultValue: 0,
             allowNull: true
         }
+
     });
-
-    function addUser(newUser, callback) {
-        bcrypt.genSalt(10, function (err, salt) {
-            if (err) throw err;
-
-            // Encrypting the password into {@code hash}
-            bcrypt.hash(newUser.password, salt, function (err, hash) {
-                if (err) throw err;
-
-                // Storing the hashed password in the user object
-                newUser.password = hash;
-                users.create(newUser).then(function (user) {
-                    // Going back to caller
-                    return callback(err, user)
-                })
-
-            })
-        })
-    };
 
     return users;
 };
-
-
 
 /*
 // Querying user by id
