@@ -10,7 +10,7 @@ const app = express();
 const users = require('./routes/users');
 
 // Port number
-const port = process.env.PORT || 8080;
+const port = 5000;
 
 // CORS middleware
 app.use(cors());
