@@ -97,7 +97,7 @@ router.post('/authenticate', function (req, res) {
 // The authenticate method in passport invokes the
 // JwtStrategy method in passport.js, authenticates the
 // user and returns the user details
-router.get('/dashboard', passport.authenticate('jwt', {session: false}),
+router.get('/profile', passport.authenticate('jwt', {session: false}),
     function (req, res) {
       res.json({user: req.user});
     });
