@@ -3,9 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="247a5f05-681a-4994-9723-8ac2d12e8f6f" name="Default" comment="1) Created backend for user creation and storing to PostgreSQL&#10;2) Implemented a search function to search user by id, last name and email.&#10;3) Tested all the above by giving input from Postman REST client">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/answerbookui/public/index.html" afterPath="$PROJECT_DIR$/answerbookui/public/index.html" />
       <change beforePath="$PROJECT_DIR$/app.js" afterPath="$PROJECT_DIR$/app.js" />
-      <change beforePath="$PROJECT_DIR$/config/database.js" afterPath="$PROJECT_DIR$/config/database.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -101,8 +99,8 @@
       <file leaf-file-name="app.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
-              <caret line="12" column="18" lean-forward="false" selection-start-line="12" selection-start-column="18" selection-end-line="12" selection-end-column="18" />
+            <state relative-caret-position="-216">
+              <caret line="12" column="38" lean-forward="true" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="38" />
               <folding />
             </state>
           </provider>
@@ -374,7 +372,7 @@
       <workItem from="1515440126943" duration="24741000" />
       <workItem from="1515526630145" duration="24656000" />
       <workItem from="1515645246431" duration="19930000" />
-      <workItem from="1515692998655" duration="15916000" />
+      <workItem from="1515692998655" duration="16012000" />
     </task>
     <task id="LOCAL-00001" summary="1) Created backend for user creation and storing to PostgreSQL&#10;2) Implemented a search function to search user by id, last name and email.&#10;3) Tested all the above by giving input from Postman REST client">
       <created>1514715218366</created>
@@ -415,7 +413,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="192292000" />
+    <option name="totallyTimeSpent" value="192388000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -870,8 +868,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="12" column="18" lean-forward="false" selection-start-line="12" selection-start-column="18" selection-end-line="12" selection-end-column="18" />
+        <state relative-caret-position="-216">
+          <caret line="12" column="38" lean-forward="true" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="38" />
           <folding />
         </state>
       </provider>
