@@ -4,10 +4,10 @@
   "description": "Q & A forum for organizations",
   "main": "app.js",
   "scripts": {
+    "start": "concurrently \"npm run server\" \"npm run client\"",
     "starts": "node app",
     "server": "nodemon app",
-    "client": "npm start --prefix answerbookui",
-    "start": "concurrently \"npm run server\" \"npm run client\""
+    "client": "npm start --prefix answerbookui"
   },
   "dependencies": {
     "bcryptjs": "*",
