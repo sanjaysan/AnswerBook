@@ -10,7 +10,7 @@ module.exports = function (sequelize, DataTypes) {
 
         content: {
 
-            type: DataTypes.TEXT,
+            type: DataTypes.STRING,
             allowNull: false
         },
 
@@ -19,8 +19,40 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.INTEGER,
             min: 0,
             allowNull: true
+        },
+
+        answered: {
+
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+            allowNull: true
         }
 
     });
+
+    questions.addQuestion = function (newQuestion, callback) {
+
+        questions.create(newQuestion).then(function (question) {
+
+            return callback(null, question);
+        })
+
+    };
+
+    questions.getQuestionById = function (id, callback) {
+
+        questions.find({
+            where:{
+                id: id
+            }
+        }).then(function (question){
+            return callback(null, question);
+        }).catch(function (err){
+            return callback(err,null);
+        })
+
+    };
+
+
     return questions;
 };
