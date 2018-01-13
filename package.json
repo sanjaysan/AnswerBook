@@ -4,12 +4,16 @@
   "description": "Q & A forum for organizations",
   "main": "app.js",
   "scripts": {
-    "start": "cd answerbookui && serve -s build",
-    "starts": "node app",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "start": "babel-node app.js",
+    "build": "react-scripts build",
     "server": "nodemon app",
-    "client": "npm start --prefix answerbookui"
+    "client": "npm start --prefix answerbookui",
+    "eject" : "react-scripts eject",
+    "heroku-postbuild": "npm run build"
   },
   "dependencies": {
+    "@babel/node": "^7.0.0-beta.37",
     "bcryptjs": "*",
     "body-parser": "*",
     "concurrently": "^3.5.1",
