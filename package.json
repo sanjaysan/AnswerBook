@@ -5,13 +5,15 @@
   "main": "app.js",
   "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "start": "babel-node app.js",
-    "build": "react-scripts build",
+    "start": "node app",
     "server": "nodemon app",
     "client": "npm start --prefix answerbookui",
-    "eject" : "react-scripts eject",
-    "heroku-postbuild": "npm run build"
+    "heroku-postbuild": "cd answerbookui/ && npm install && npm install --only=dev --no-shrinkwrap && npm run build"
   },
+  "cacheDirectories": [
+    "node_modules",
+    "react-ui/node_modules"
+  ],
   "dependencies": {
     "@babel/node": "^7.0.0-beta.37",
     "bcryptjs": "*",
