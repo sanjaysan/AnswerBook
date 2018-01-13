@@ -88,7 +88,7 @@ router.get('/dashboard', passport.authenticate('jwt', {session: false}),
     });
 
 //Search by ID
-router.get('/:id([0-9]+)', function (req, res) {
+router.get('/:id([0-9]+)', passport.authenticate('jwt', {session: false}), function (req, res) {
     db.user.getUserById(req.params.id, function (err, user) {
         if (err)
             res.json({msg: 'User information not available'});
@@ -104,6 +104,52 @@ router.get('/:email([A-Za-z0-9_.]+@[A-Za-z.]+)', function (req, res) {
             res.json({msg: 'User information not available'});
         else
             res.json({userDetails: user})
+    })
+});
+
+//Adds question with uid being userID
+router.post('/:uid/questions', function(req, res){
+
+    const newQuestion = {
+        content: req.body.content,
+        userId: req.params.uid
+    };
+
+    db.user.getUserById(req.params.uid, function (err, user) {
+        if (err)
+            res.json({msg: 'User information not available'});
+        else
+        {
+            db.question.addQuestion(newQuestion, function (err, question) {
+
+                if(err)
+                    res.json({msg: 'Question could not be added'});
+                else
+                    res.json({success: true, questionDetails: question});
+
+            })
+        }
+    })
+
+
+});
+
+//GETS QUESTION based on UserID and questionID
+router.get('/:uid/questions/:qid', function (req, res) {
+
+    db.user.getUserById(req.params.uid, function (err, user) {
+        if (err)
+            res.json({msg: 'User information not available'});
+        else
+        {
+            db.question.getQuestionById(req.params.qid, function(err, question)
+            {
+                if(err)
+                    res.json({msg: 'Question information not available'});
+                else
+                    res.json({questionDetails: question})
+            })
+        }
     })
 });
 
