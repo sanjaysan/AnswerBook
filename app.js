@@ -36,7 +36,7 @@ app.get('/', function (req, res) {
 
 // All requests
 app.get('*', function (req, res) {
-  res.sendFile(path.join(__dirname, 'public/index.html'))
+  res.sendFile(path.resolve(__dirname, './answerbookui/build', 'index.html'))
 });
 
 // Start server
