@@ -4,7 +4,7 @@
   "description": "Q & A forum for organizations",
   "main": "app.js",
   "scripts": {
-    "server": "node app",
+    "start": "node app",
     "heroku-postbuild": "cd answerbookui/ && npm install && npm install --only=dev --no-shrinkwrap && npm run build"
   },
   "cacheDirectories": [
