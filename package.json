@@ -4,10 +4,7 @@
   "description": "Q & A forum for organizations",
   "main": "app.js",
   "scripts": {
-    "start": "concurrently \"npm run server\" \"npm run client\"",
-    "dev": "node app",
-    "server": "nodemon app",
-    "client": "npm start --prefix answerbookui",
+    "server": "node app",
     "heroku-postbuild": "cd answerbookui/ && npm install && npm install --only=dev --no-shrinkwrap && npm run build"
   },
   "cacheDirectories": [

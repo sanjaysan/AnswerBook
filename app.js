@@ -16,7 +16,7 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 
 // Set static folder
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.resolve(__dirname, './answerbookui/build')));
 
 // Body parser middleware
 app.use(bodyParser.json());
