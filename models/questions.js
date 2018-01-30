@@ -39,5 +39,6 @@ module.exports = function (sequelize, DataTypes) {
       return callback(err, null);
     })
   };
+
   return questions;
 };

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Navbar from '../navbar/navbar';
-// import Notifications, { notify } from 'react-notify-toast';
 import { Button, Form } from 'semantic-ui-react';
 import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
@@ -72,7 +71,6 @@ class Register extends Component {
   performValidations (e) {
     e.preventDefault();
     if (!this.validateRegister()) {
-      // notify.show('Please fill in all fields', 'error', 3000, 'red');
       toast.error('Please fill in all fields', {
         position: toast.POSITION.TOP_CENTER
       });
@@ -80,7 +78,6 @@ class Register extends Component {
     }
 
     if (!this.validateEmail(this.state.email)) {
-      // notify.show('Please enter a valid email!', 'error', 3000, 'red');
       toast.error('Please enter a valid email!', {
         position: toast.POSITION.TOP_CENTER
       });
@@ -92,13 +89,11 @@ class Register extends Component {
     };
     axios.post('/users/register', this.state, headers).then((res) => {
       this.props.history.push('/login');
-      // notify.show('You are now registered and can log in', 'success', 3000, 'green');
       toast.success('You are now registered and can log in', {
         position: toast.POSITION.TOP_CENTER
       });
     }).catch((err) => {
       console.error(err);
-      // notify.show('Oh Oh, something has gone wrong', 'error', 3000, 'red');
       toast.error('Oh Oh, something has gone wrong', {
         position: toast.POSITION.TOP_CENTER
       });

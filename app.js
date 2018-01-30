@@ -1,13 +1,15 @@
-var express = require('express');
-var path = require('path');
-var bodyParser = require('body-parser');
-var cors = require('cors');
-var passport = require('passport');
-var app = express();
+const express = require('express');
+const path = require('path');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const passport = require('passport');
+const app = express();
 
-var db = require('./models/db');
+// Model
+const db = require('./models/db');
+
 // Users route
-var users = require('./routes/users');
+const users = require('./routes/users');
 
 // Port number
 const port = process.env.PORT || 5000;
@@ -21,6 +23,7 @@ app.use(express.static(path.resolve(__dirname, './answerbookui/build')));
 // Body parser middleware
 app.use(bodyParser.json());
 
+// View engine
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
@@ -32,7 +35,6 @@ app.use(passport.session());
 
 app.use('/users', users);
 
-
 // Index route
 app.get('/', function (req, res) {
   res.send('Welcome to AnswerBook');
@@ -40,17 +42,14 @@ app.get('/', function (req, res) {
 
 // Sync and start server
 db.sequelize.sync({force: false}).then(function() {
-    app.listen(port, function() {
-       console.log('Listening at port:', port);
-    });
+  app.listen(port, function () {
+    console.log('Server started on port: ', port);
+  });
+});
+
 // All requests
 app.get('*', function (req, res) {
   res.sendFile(path.resolve(__dirname, './answerbookui/build', 'index.html'))
-});
-
-// Start server
-app.listen(port, function () {
-  console.log('Server started on port ' + port);
 });
 
 /*app.use(function(req, res, next) {

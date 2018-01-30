@@ -1,11 +1,11 @@
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
-const User = require('../models/user');
+const db = require('../models/db');
 const config = require('../config/database');
 
 module.exports = function (passport) {
   // Options
-  var opts = {};
+  let opts = {};
 
   // Method to pass the web token
   opts.jwtFromRequest = ExtractJwt.fromHeader('authorization');
@@ -13,7 +13,7 @@ module.exports = function (passport) {
 
   // Gives the JWT payload
   passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
-    User.getUserByUserName(jwt_payload.user, function (err, user) {
+    db.user.getUserByUserName(jwt_payload.user, function (err, user) {
       if (err) {
         return done(err, false);
       }

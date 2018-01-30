@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Navbar from '../navbar/navbar';
-import Notifications from 'react-notify-toast';
 import ValidateUserAuthentication from '../../services/ValidateUserAuthentication';
 
 class Dashboard extends Component {
@@ -21,7 +20,6 @@ class Dashboard extends Component {
             isLoggedIn ? <div>
               <Navbar/>
               <br/><br/>
-              <Notifications/>
               <div className="col-md-5">
                 <h2 className="page-header">Dashboard</h2>
                 <br/>

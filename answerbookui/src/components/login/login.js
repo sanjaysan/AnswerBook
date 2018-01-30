@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Navbar from '../navbar/navbar';
 import axios from 'axios';
-// import Notifications, { notify } from 'react-notify-toast';
 import { Button, Form } from 'semantic-ui-react';
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -19,7 +18,6 @@ class Login extends Component {
         <div>
           <Navbar/>
           <br/><br/>
-          {/*<Notifications/>*/}
           <ToastContainer autoClose={3000}/>
           <Form className='col-md-4'>
             <legend className='col-md-4'>Login</legend>
@@ -65,16 +63,13 @@ class Login extends Component {
         toast.success('You are now logged in', {
           position: toast.POSITION.TOP_CENTER
         });
-        // notify.show('You are now logged in', 'success', 3000, 'green');
       } else {
-        // notify.show(res.data.msg, 'error', 3000, 'red');
         toast.error(res.data.msg, {
           position: toast.POSITION.TOP_CENTER
         });
       }
     }).catch((err) => {
       console.error(err);
-      // notify.show('Oh Oh, something has gone wrong', 'error', 3000, 'red');
       toast.error('Oh Oh, something has gone wrong', {
         position: toast.POSITION.TOP_CENTER
       });
