@@ -1,90 +1,82 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom'
-import Notifications, { notify } from 'react-notify-toast';
-import { Redirect } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
+import { Menu } from 'semantic-ui-react';
+import PropTypes from 'prop-types';
+import { ToastContainer } from 'react-toastify';
 import ValidateUserAuthentication from '../../services/ValidateUserAuthentication';
 
 class Navbar extends Component {
 
-  constructor (props) {
-    super(props);
-    this.state = {
-      isLoggedOut: false
+  static propTypes = {
+    match: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired
+  };
+
+  state = {
+    activeItem: '',
+    isLoggedOut: false
+  };
+
+  handleItemClick = (e, {name}) => {
+    if (name === 'logout') {
+      localStorage.clear();
+      this.setState({
+        isLoggedOut: true
+      }, () => {
+        this.props.history.push('/login');
+      });
+    } else {
+      if (name === 'home' || name === 'answerbook') name = '/';
+      this.setState({activeItem: name});
+      this.props.history.push(name);
     }
-  }
+  };
 
   render () {
     const isLoggedIn = ValidateUserAuthentication.isUserLoggedIn();
-    return <div>
-      <Notifications/>
-      <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
-        <Link className="navbar-brand" to="/">AnswerBook</Link>
-        <button className="navbar-toggler" type="button" data-toggle="collapse"
-                data-target="#navbarColor01" aria-controls="navbarColor01"
-                aria-expanded="false" aria-label="Toggle navigation">
-          <span className="navbar-toggler-icon"/>
-        </button>
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav">
-            <li className="nav-item">
-              <Link className="nav-link" to="/"
-                    activeclassname="active">HOME</Link>
-            </li>
-          </ul>
-          <ul className="navbar-nav ml-auto">
+    const activeItem = this.state.activeItem;
+    return (
+        <div>
+          <Menu inverted>
+            <Menu.Item name='answerbook' className={'navbar-brand'}
+                       onClick={this.handleItemClick}>
+              AnswerBook
+            </Menu.Item>
+            <Menu.Item name='home' active={activeItem === 'home'}
+                       onClick={this.handleItemClick}/>
             {
               isLoggedIn &&
-              <li className="nav-item">
-                <Link className="nav-link" to="/dashboard"
-                      activeclassname="active">DASHBOARD</Link>
-              </li>
+              <Menu.Item position='right' name='dashboard'
+                         active={activeItem === 'dashboard'}
+                         onClick={this.handleItemClick}/>
             }
-
             {
               isLoggedIn &&
-              <li className="nav-item">
-                <Link className="nav-link" to='/profile'
-                      activeclassname="active">PROFILE</Link>
-              </li>}
-
+              <Menu.Item name='profile' active={activeItem === 'profile'}
+                         onClick={this.handleItemClick}/>
+            }
             {
               !isLoggedIn &&
-              <li className="nav-item">
-                <Link className="nav-link" to="/login"
-                      activeclassname="active">LOGIN</Link>
-              </li>}
-
+              <Menu.Item name='login' position='right'
+                         active={activeItem === 'login'}
+                         onClick={this.handleItemClick}/>
+            }
             {
               !isLoggedIn &&
-              <li className="nav-item">
-                <Link className="nav-link" to="/register"
-                      activeclassname="active">REGISTER</Link>
-              </li>
+              <Menu.Item name='register' active={activeItem ===
+              'register'} onClick={this.handleItemClick}/>
             }
-
             {
               isLoggedIn &&
-              <li className="nav-item">
-                <Link className="nav-link" to="#"
-                      onClick={this.handleLogout.bind(this)}>LOGOUT</Link>
-              </li>
+              <Menu.Item name='logout' active={activeItem === 'logout'}
+                         onClick={this.handleItemClick}/>
             }
-
-          </ul>
+          </Menu>
+          <ToastContainer autoClose={3000}/>
         </div>
-      </nav>
-      {this.state.isLoggedOut && (<Redirect to='/login'/>)}
-    </div>;
-  }
-
-  handleLogout () {
-    localStorage.clear();
-    this.setState({
-      isLoggedOut: true
-    }, () => {
-      notify.show('You are logged out', 'success', 3000, 'green');
-    });
+    );
   }
 }
 
-export default Navbar;
+export default withRouter(Navbar);

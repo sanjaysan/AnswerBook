@@ -1,23 +1,44 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import './App.css';
-import Notifications from 'react-notify-toast';
 import Navbar from './components/navbar/navbar';
-import { Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
+import { Button } from 'semantic-ui-react';
+import ValidateUserAuthentication from './services/ValidateUserAuthentication';
 
 class App extends Component {
+
+  static propTypes = {
+    match: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired
+  };
+
+  handleClick = (e, {name}) => {
+    this.props.history.push(name);
+  };
+
   render () {
+    const isLoggedIn = ValidateUserAuthentication.isUserLoggedIn();
     return (
         <div className="App">
-          <Notifications/>
           <Navbar/>
           <div className="jumbotron text-center">
             <h1 className="display-3">Answer Book</h1>
             <p className="lead">Welcome to AnswerBook - the answer to all your
               questions</p>
             <div>
-              <Link className="btn btn-primary" to="/register">Register</Link>
+              {
+                !isLoggedIn &&
+                <Button name='register' content='Register' primary
+                        onClick={this.handleClick}/>
+              }
               &nbsp;
-              <Link className="btn btn-secondary" to="/login">Login</Link>
+              {
+                !isLoggedIn &&
+                <Button name='login' content='Login' secondary
+                        onClick={this.handleClick}/>
+              }
             </div>
           </div>
           <div className="row">
@@ -42,4 +63,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default withRouter(App);
