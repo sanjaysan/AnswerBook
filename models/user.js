@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 module.exports = function (sequelize, DataTypes) {
 
@@ -42,7 +42,8 @@ module.exports = function (sequelize, DataTypes) {
         //USER RATING BASED ON QUESTIONS, ANSWERS, READY-LISTS
 
         rating: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.DOUBLE,
+            defaultValue: 0,
             min: 0,
             allowNull: true
         },

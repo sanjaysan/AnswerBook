@@ -1,8 +1,8 @@
 module.exports = {
-  host: 'baasu.db.elephantsql.com',
+  host: 'localhost',
   port: 5432,
-  database: 'uvhexsbb',
-  user: 'uvhexsbb',
-  password: 'pz8CarFn27leORQBwt_fqRMgxxf6RSaz',
+  database: 'answerbook',
+  user: 'postgres',
+  password: 'postgres',
   secret: 'newstartup'
 };

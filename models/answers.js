@@ -1,38 +1,30 @@
 module.exports = function (sequelize, DataTypes) {
+  return sequelize.define('answers', {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
+    },
 
-    const answers = sequelize.define('answers', {
+    content: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
 
-        id: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true
-        },
+    upvotes: {
+      type: DataTypes.INTEGER,
+      min: 0,
+      allowNull: true
+    },
 
-        content : {
+    accepted: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
 
-            type: DataTypes.TEXT,
-            allowNull: false
-        },
-
-        upvotes: {
-
-            type: DataTypes.INTEGER,
-            min: 0,
-            allowNull: true
-        },
-
-        accepted: {
-
-            type: DataTypes.BOOLEAN,
-            defaultValue: false
-        },
-
-        ready_list: {
-
-            type: DataTypes.BOOLEAN,
-            defaultValue: false
-        }
-
-    });
-    return answers;
+    ready_list: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    }
+  });
 };
