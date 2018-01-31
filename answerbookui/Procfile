@@ -1,1 +1,1 @@
-web: HTTPS=true npm start
+web: HTTPS=true npm run dev
