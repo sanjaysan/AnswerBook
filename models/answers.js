@@ -6,25 +6,25 @@ module.exports = function (sequelize, DataTypes) {
       autoIncrement: true
     },
 
-    content: {
-      type: DataTypes.TEXT,
-      allowNull: false
-    },
-
     upvotes: {
       type: DataTypes.INTEGER,
       min: 0,
       allowNull: true
     },
 
-    accepted: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
-    },
+      Body: {
+        type: DataTypes.STRING,
+          allowNull: false
+      }
 
-    ready_list: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
-    }
+    // accepted: {
+    //   type: DataTypes.BOOLEAN,
+    //   defaultValue: false
+    // },
+    //
+    // ready_list: {
+    //   type: DataTypes.BOOLEAN,
+    //   defaultValue: false
+    // }
   });
 };

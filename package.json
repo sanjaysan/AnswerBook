@@ -30,5 +30,8 @@
     "sequelize": "^4.28.6"
   },
   "author": "Sanjay, Varun, Shivanee, Aravind, Palani, Sugadev",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^1.14.12"
+  }
 }
