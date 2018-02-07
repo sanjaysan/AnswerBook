@@ -25,7 +25,7 @@ router.post('/register', function (req, res) {
   });
 });
 
-router.post('/authenticate', function (req, res) {
+router.post('/login', function (req, res, next) {
   // Getting data from form
   const username = req.body.username;
   const password = req.body.password;
@@ -64,7 +64,7 @@ router.post('/authenticate', function (req, res) {
       }
     })
   })
-
+  next();
 });
 
 // Authenticate
@@ -73,6 +73,13 @@ router.post('/authenticate', function (req, res) {
 // The authenticate method in passport invokes the
 // JwtStrategy method in passport.js, authenticates the
 // user and returns the user details
+
+router.get('/dashboard', function (req, res) {
+
+
+
+})
+
 router.get('/profile', passport.authenticate('jwt', {session: false}),
     function (req, res) {
       res.json({user: req.user});
@@ -110,7 +117,7 @@ router.post('/:uid/questions', function (req, res) {
   };
 
   db.user.getUserById(req.params.uid, function (err, user) {
-    if (err)
+    if (err || !user)
       res.json({msg: 'User information not available'});
     else {
       db.question.addQuestion(newQuestion, function (err, question) {
@@ -123,21 +130,49 @@ router.post('/:uid/questions', function (req, res) {
   })
 });
 
-//GETS QUESTION based on UserID and questionID
-router.get('/:uid/questions/:qid', function (req, res) {
-  db.user.getUserById(req.params.uid, function (err, user) {
-    if (err) {
-      res.json({msg: 'User information not available'});
-    } else {
-      db.question.getQuestionById(req.params.qid, function (err, question) {
-        if (err)
-          res.json({msg: 'Question information not available'});
-        else
-          res.json({questionDetails: question})
-      })
-    }
-  })
+//Profile Page. To get all questions
+router.get('/:uid/questions', passport.authenticate('jwt', {session: false}),
+
+    function (req, res) {
+
+  // db.user.getUserById(req.params.uid, function (err, user) {
+  //       if (err || !user) {
+  //           res.json({msg: 'User information not available'});
+  //       } else {
+  //           db.question.getQuestionById(req.params.qid, function (err, question) {
+  //               if (err)
+  //                   res.json({msg: 'Question information not available'});
+  //               else
+  //                   res.json({questionDetails: question})
+  //           })
+  //       }
+  //   })
+
+
+
 });
+
+router.post('/:uid/questions/:qid', passport.authenticate('jwt', {session: false}),
+
+    function (req, res) {
+
+      const newAnswer = {
+
+        body: req.body.body,
+        questionid : req.params.qid,
+        userid : req.params.uid
+      }
+
+      db.answer.addAnswer(newAnswer, function(err, answer) {
+
+        if(err)
+          res.json({msg : 'Answer not added'});
+        else
+          res.json({answerDetails : answer});
+
+      })
+
+    });
 
 module.exports = router;
 

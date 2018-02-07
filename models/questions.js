@@ -13,13 +13,13 @@ module.exports = function (sequelize, DataTypes) {
           allowNull: true
       },
 
-    Title: {
-      type: DataTypes.STRING,
+    title: {
+      type: DataTypes.TEXT,
       allowNull: false
     },
 
-    Body: {
-        type: DataTypes.STRING,
+    body: {
+        type: DataTypes.TEXT,
         allowNull: false
     }
 

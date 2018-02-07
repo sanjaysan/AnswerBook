@@ -28,16 +28,18 @@ db.tag = require('./tags')(sequelize, Sequelize);
 
 // Relations!!!!
 // USER-QUESTION 1:N
-db.question.belongsTo(db.user, {foreignKey: 'userId'});
-db.user.hasMany(db.question);
+db.question.belongsTo(db.user, {foreignKey: 'userid'});
+db.user.hasMany(db.question, {foreignKey: 'userid'});
 
 // USER-ANSWER 1:N
-db.user.hasMany(db.answer);
-db.answer.belongsTo(db.user, {foreignKey: 'userId'});
+db.answer.belongsTo(db.user, {foreignKey: 'userid'});
+db.user.hasMany(db.answer, {foreignKey: 'userid'});
+
 
 // QUESTION-ANSWER 1:N
-db.question.hasMany(db.answer);
-db.answer.belongsTo(db.question, {foreignKey: 'questionId'});
+db.answer.belongsTo(db.question, {foreignKey: 'questionid'});
+db.question.hasMany(db.answer, {foreignKey: 'questionid'});
+
 
 // YET TO ASSOCIATE FOR TAGS. N:M IS MY THOUGHT
 // db.question.belongsToMany(db.tag);

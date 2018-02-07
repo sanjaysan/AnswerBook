@@ -1,5 +1,5 @@
 module.exports = function (sequelize, DataTypes) {
-  return sequelize.define('answers', {
+  const answers =  sequelize.define('answers', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -12,19 +12,32 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: true
     },
 
-      Body: {
-        type: DataTypes.STRING,
+      body: {
+        type: DataTypes.TEXT,
           allowNull: false
-      }
+      },
 
-    // accepted: {
-    //   type: DataTypes.BOOLEAN,
-    //   defaultValue: false
-    // },
-    //
-    // ready_list: {
-    //   type: DataTypes.BOOLEAN,
-    //   defaultValue: false
-    // }
+    accepted: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+
+    ready_list: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    }
   });
+
+  answers.addAnswer = function (answer) {
+
+      answers.create(answer).then(function (answer) {
+
+          return callback(null, answer)
+      }).catch(function(err) {
+
+          return callback(err,null)
+      })
+  }
+
+
 };
