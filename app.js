@@ -41,7 +41,7 @@ app.get('/', function (req, res) {
 });
 
 // Sync and start server
-db.sequelize.sync({force: false}).then(function() {
+db.sequelize.sync({force: true}).then(function() {
   app.listen(port, function () {
     console.log('Server started on port: ', port);
   });
