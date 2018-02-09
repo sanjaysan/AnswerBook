@@ -28,7 +28,7 @@ module.exports = function (sequelize, DataTypes) {
         }
     });
 
-    answers.addAnswer = function (answer) {
+    answers.addAnswer = function (answer, callback) {
 
         answers.create(answer).then(function (answer) {
 
@@ -39,5 +39,5 @@ module.exports = function (sequelize, DataTypes) {
         })
     }
 
-
+    return answers;
 };
