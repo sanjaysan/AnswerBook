@@ -7,22 +7,23 @@ module.exports = function (sequelize, DataTypes) {
       autoIncrement: true
     },
 
-      upvotes: {
-          type: DataTypes.INTEGER,
-          min: 0,
-          allowNull: true
-      },
-
     title: {
       type: DataTypes.TEXT,
       allowNull: false
     },
-
     body: {
-        type: DataTypes.TEXT,
-        allowNull: false
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    score: {
+      type: DataTypes.INTEGER,
+      min: 0,
+      allowNull: true
+    },
+    answered: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true
     }
-
   });
 
   questions.addQuestion = function (newQuestion, callback) {
