@@ -22,7 +22,7 @@ class Register extends Component {
         <div>
           <Navbar/>
           <br/><br/>
-          <ToastContainer autoClose={3000}/>
+         <ToastContainer autoClose={3000}/>
           <Form className='col-md-4'>
             <legend className='col-md-4'>Register</legend>
             <br/>
@@ -62,9 +62,9 @@ class Register extends Component {
     );
   }
 
-  handleChange (e, {name, value}) {
+  handleChange (e, {name}) {
     this.setState({
-      [name]: value
+      [name]: e.target.value
     })
   }
 

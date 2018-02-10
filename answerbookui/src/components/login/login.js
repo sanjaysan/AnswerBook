@@ -44,9 +44,9 @@ class Login extends Component {
     );
   }
 
-  handleChange (e, {name, value}) {
+  handleChange (e, {name}) {
     this.setState({
-      [name]: value
+      [name]: e.target.value
     })
   }
 
@@ -55,7 +55,7 @@ class Login extends Component {
     const headers = {
       headers: {'Content-Type': 'application/json'}
     };
-    axios.post('/users/authenticate', this.state, headers).then((res) => {
+    axios.post('/users/login', this.state, headers).then((res) => {
       if (res.data.success) {
         localStorage.setItem('id_token', String(res.data.token));
         localStorage.setItem('user', JSON.stringify(res.data.user));
