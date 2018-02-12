@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Navbar from '../navbar/navbar';
 import axios from 'axios';
 import { Button, Form } from 'semantic-ui-react';
-import { ToastContainer, toast } from 'react-toastify';
+import Notification from '../../services/Notification';
 
 class Login extends Component {
   constructor () {
@@ -18,7 +18,6 @@ class Login extends Component {
         <div>
           <Navbar/>
           <br/><br/>
-          <ToastContainer autoClose={3000}/>
           <Form className='col-md-4'>
             <legend className='col-md-4'>Login</legend>
             <br/>
@@ -44,9 +43,9 @@ class Login extends Component {
     );
   }
 
-  handleChange (e, {name}) {
+  handleChange (e) {
     this.setState({
-      [name]: e.target.value
+      [e.target.name]: e.target.value
     })
   }
 
@@ -60,19 +59,13 @@ class Login extends Component {
         localStorage.setItem('id_token', String(res.data.token));
         localStorage.setItem('user', JSON.stringify(res.data.user));
         this.props.history.push('/dashboard');
-        toast.success('You are now logged in', {
-          position: toast.POSITION.TOP_CENTER
-        });
+        Notification.showToast('You are now logged in', 'success');
       } else {
-        toast.error(res.data.msg, {
-          position: toast.POSITION.TOP_CENTER
-        });
+        Notification.showToast(res.data.msg, 'error');
       }
     }).catch((err) => {
       console.error(err);
-      toast.error('Oh Oh, something has gone wrong', {
-        position: toast.POSITION.TOP_CENTER
-      });
+      Notification.showToast('Oh Oh, something has gone wrong', 'error');
       return false;
     })
   }

@@ -72,40 +72,35 @@ router.post('/login', function (req, res) {
 // The authenticate method in passport invokes the
 // JwtStrategy method in passport.js, authenticates the
 // user and returns the user details
-
-router.get('/dashboard', passport.authenticate('jwt', {session: false}),
-    function (req, res) {
-
+router.get('/dashboard', function (req, res) {
   db.question.findAll({
-    include: [
-      {
-        model: db.answer,
-        required: true // For INNER JOIN
+    include: [{
+          model: db.answer,
+          required: true,
       }]
   }).then(function (questions) {
-
     const result = questions.map(function (question) {
-
       return Object.assign(
           {},
           {
             question_id: question.id,
             question_title: question.title,
             question_body: question.body,
+            asked_by: question.userid,
             answers: question.answers.map(function (answer) {
-
               return Object.assign(
                   {},
                   {
                     answer_id: answer.id,
-                    answer_body: answer.body
+                    answer_body: answer.body,
+                    answered_by: answer.userid
                   }
               )
             })
           }
-      )
+      );
     });
-    res.json(result);
+    res.json(result);``
   })
 });
 
@@ -140,7 +135,6 @@ router.get('/:email([A-Za-z0-9_.]+@[A-Za-z.]+)', function (req, res) {
 
 // Adds question with uid being userID
 router.post('/:uid/questions', function (req, res) {
-
   const newQuestion = {
     title: req.body.title,
     body: req.body.body,
@@ -161,42 +155,79 @@ router.post('/:uid/questions', function (req, res) {
   })
 });
 
-//Profile Page. To get all questions
-router.get('/:uid/questions',
-
-    function (req, res) {
-
-      // db.user.getUserById(req.params.uid, function (err, user) {
-      //       if (err || !user) {
-      //           res.json({msg: 'User information not available'});
-      //       } else {
-      //           db.question.getQuestionById(req.params.qid, function (err, question) {
-      //               if (err)
-      //                   res.json({msg: 'Question information not available'});
-      //               else
-      //                   res.json({questionDetails: question})
-      //           })
-      //       }
-      //   })
-
+// Get all questions posted by a user
+router.get('/:uid/questions', function (req, res) {
+  // db.user.getUserById(req.params.uid, function (err, user) {
+  //   if (err || !user)
+  //     res.json({success: false, msg: 'User not found'})
+  //   else {
+  //     db.question.findAll({
+  //       where: {
+  //         userid: req.params.uid
+  //       }
+  //     }).then(function(questions) {
+  //       res.json(questions)
+  //     }).catch(function(err) {
+  //       res.json({success: false, msg: 'User not found'})
+  //     })
+  //   }
+  // });
+  db.user.findAll({
+    where: {id: req.params.uid},
+    include: [
+      {
+        model: db.question,
+        required: true
+      }]
+  }).then(function (users) {
+    const userQuesObj = users.map(function (user) {
+      return Object.assign(
+          {},
+          {
+            first_name: user.firstName,
+            last_name: user.lastName,
+            username: user.username,
+            questions: user.questions
+          }
+      )
     });
+    if (userQuesObj && userQuesObj.length)
+      res.json(userQuesObj);
+    else
+      res.json({success: false, msg: 'User not found'})
+  })
+});
 
-router.post('/:uid/questions/:qid',
-    function (req, res) {
-      const newAnswer = {
-        body: req.body.body,
-        questionid: req.params.qid,
-        userid: req.params.uid
-      };
+// Post an answer to a question
+router.post('/:uid/questions/:qid', function (req, res) {
+  const newAnswer = {
+    body: req.body.body,
+    questionid: req.params.qid,
+    userid: req.params.uid
+  };
 
-      db.answer.addAnswer(newAnswer, function (err, answer) {
-        if (err)
-          res.json({msg: 'Answer not added'});
-        else
-          res.json({answerDetails: answer});
+  db.answer.addAnswer(newAnswer, function (err, answer) {
+    if (err)
+      res.json({msg: 'Answer could not be added'});
+    else
+      res.json({answerDetails: answer});
+  })
+});
 
-      })
-    });
+// Get the answers to a question
+router.get('/questions/:qid', function (req, res) {
+  db.question.findAll({
+    where: {id: req.params.qid},
+    include: [
+      {
+        model: db.answer
+      }]
+  }).then(function (ans) {
+    res.json(ans);
+  }).catch(function (err) {
+    res.json({success: false, msg: err.message})
+  })
+});
 
 module.exports = router;
 

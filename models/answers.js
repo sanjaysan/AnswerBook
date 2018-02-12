@@ -24,6 +24,7 @@ module.exports = function (sequelize, DataTypes) {
     }
   });
 
+  // Post an answer to a question
   answers.addAnswer = function (answer, callback) {
     answers.create(answer).then(function (answer) {
       return callback(null, answer)

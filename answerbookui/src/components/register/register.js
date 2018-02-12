@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Navbar from '../navbar/navbar';
 import { Button, Form } from 'semantic-ui-react';
-import { ToastContainer, toast } from 'react-toastify';
+import Notification from '../../services/Notification';
 import axios from 'axios';
 
 class Register extends Component {
+
   constructor () {
     super();
     this.state = {
@@ -22,7 +23,6 @@ class Register extends Component {
         <div>
           <Navbar/>
           <br/><br/>
-         <ToastContainer autoClose={3000}/>
           <Form className='col-md-4'>
             <legend className='col-md-4'>Register</legend>
             <br/>
@@ -64,23 +64,19 @@ class Register extends Component {
 
   handleChange (e, {name}) {
     this.setState({
-      [name]: e.target.value
+      [e.target.name]: e.target.value
     })
   }
 
   performValidations (e) {
     e.preventDefault();
     if (!this.validateRegister()) {
-      toast.error('Please fill in all fields', {
-
-      });
+      Notification.showToast('Please fill in all fields', 'error');
       return false;
     }
 
     if (!this.validateEmail(this.state.email)) {
-      toast.error('Please enter a valid email!', {
-        position: toast.POSITION.TOP_CENTER
-      });
+      Notification.showToast('Please enter a valid email!', 'error');
       return false;
     }
 
@@ -89,14 +85,10 @@ class Register extends Component {
     };
     axios.post('/users/register', this.state, headers).then((res) => {
       this.props.history.push('/login');
-      toast.success('You are now registered and can log in', {
-        position: toast.POSITION.TOP_CENTER
-      });
+      Notification.showToast('You are now registered and can log in', 'success');
     }).catch((err) => {
       console.error(err);
-      toast.error('Oh Oh, something has gone wrong', {
-        position: toast.POSITION.TOP_CENTER
-      });
+      Notification.showToast('Oh Oh, something has gone wrong', 'error');
     })
   }
 
