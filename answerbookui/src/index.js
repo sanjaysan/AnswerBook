@@ -6,6 +6,7 @@ import Login from './components/login/login';
 import Register from './components/register/register';
 import Dashboard from './components/dashboard/dashboard';
 import Profile from './components/profile/profile';
+import Question from './components/questions/questions';
 import { BrowserRouter, Route } from 'react-router-dom';
 import registerServiceWorker from './registerServiceWorker';
 
@@ -17,6 +18,7 @@ render(
           <Route exact path='/register' component={Register}/>
           <Route exact path='/dashboard' component={Dashboard}/>
           <Route exact path='/profile' component={Profile}/>
+          <Route exact path='/questions/post' component={Question}/>
       </div>
     </BrowserRouter>,
     document.getElementById('root')

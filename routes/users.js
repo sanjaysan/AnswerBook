@@ -73,7 +73,8 @@ router.post('/login', function (req, res) {
 // JwtStrategy method in passport.js, authenticates the
 // user and returns the user details
 
-router.get('/dashboard', function (req, res) {
+router.get('/dashboard', passport.authenticate('jwt', {session: false}),
+    function (req, res) {
 
   db.question.findAll({
     include: [
@@ -139,13 +140,14 @@ router.get('/:email([A-Za-z0-9_.]+@[A-Za-z.]+)', function (req, res) {
 
 // Adds question with uid being userID
 router.post('/:uid/questions', function (req, res) {
+
   const newQuestion = {
     title: req.body.title,
     body: req.body.body,
     userid: req.params.uid
   };
 
-  db.user.getUserById(req.params.uid, function (err, user) {
+  db.user.getUserByUserName(req.params.user, function (err, user) {
     if (err || !user)
       res.json({msg: 'User information not available'});
     else {

@@ -1,9 +1,16 @@
 import jwt_decode from 'jwt-decode';
 
+
 class ValidateUserAuthentication {
   static getTokenExpirationDate (token) {
     if (token) {
       const decoded = jwt_decode(token);
+
+      // const headers = {
+      //   Authorization: localStorage.getItem('id_token')
+      // };
+      //
+      // const auth = jwt.verify(headers.Authorization, config.)
       if (!decoded.hasOwnProperty('exp')) {
         return null;
       }

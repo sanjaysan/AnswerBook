@@ -72,7 +72,7 @@ class Register extends Component {
     e.preventDefault();
     if (!this.validateRegister()) {
       toast.error('Please fill in all fields', {
-        position: toast.POSITION.TOP_CENTER
+
       });
       return false;
     }
@@ -121,3 +121,4 @@ Register.propTypes = {
 };
 
 export default Register;
+
