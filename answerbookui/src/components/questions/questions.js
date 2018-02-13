@@ -1,79 +1,99 @@
+import axios from 'axios/index';
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import Navbar from '../navbar/navbar';
-import { Button, Form, TextArea } from 'semantic-ui-react';
+import Notifications from 'react-notify-toast';
+import ValidateUserAuthentication from '../../services/ValidateUserAuthentication';
+import { Button, Form } from 'semantic-ui-react';
 import { ToastContainer, toast } from 'react-toastify';
-import axios from 'axios';
 
-
-class Question extends Component {
-    constructor () {
+class Questions extends Component {
+    constructor() {
         super();
-        this.state = {
-            title: '',
-            body: ''
-        };
-    };
 
-    render() {
-
-        return(
-
-            <div>
-                <Navbar/>
-                <br/><br/>
-                <ToastContainer autoClose={3000}/>
-                <legend className='col-md-4'>Ask a Question!</legend>
-                <Form>
-                    <TextArea className='col-md-4' label = 'Title' autoHeight required placeholder='Enter Question Title'/>
-                    <TextArea className='col-md-4' label = 'Body' autoHeight required placeholder='Enter Question Body'/>
-                    <div className='col-md-4'>
-                        <Button type='submit'
-                                primary
-                                content='Submit'
-                                onClick={this.performQuestionValidations.bind(this)}>
-                        </Button>
-                    </div>
-                </Form>
-            </div>
-
-        );
-    }
-
-    performQuestionValidations (e) {
-        e.preventDefault();
-        if (!this.validateQuestion()) {
-            toast.error('Please fill in all fields', {});
-            return false;
-        }
-        const userDetails = localStorage.getItem('user')
-        const headers = {
-            headers: {'Content-Type': 'application/json'}
         };
 
-        axios.post('/users/' + userDetails.id + '/questions', headers).then((res) => {
-            toast.success('Question Posted', {
-                position: toast.POSITION.TOP_CENTER
-            });
-            this.props.history.push('/dashboard');
-        }).catch((err) => {
-            console.error(err);
-            toast.error('Oh Oh, something has gone wrong', {
-                position: toast.POSITION.TOP_CENTER
-            });
+    handleChange(e){
+
+        this.setState({
+            [e.target.name]: e.target.value
+
         })
     }
 
-    validateQuestion () {
+    validateFields(){
 
-        const question = this.state;
-        return !(!question.Title || !question.Body);
+        const state = this.state;
+        return !(!state.body || !state.title || !state.tags)
     }
+    postQuestion(e){
+        e.preventDefault();
+         if(!this.validateFields())
+        {
+            toast.error('Fill all the required fields',{
+                position: toast.POSITION.TOP_CENTER
+            });
+            return false;
+        }
+
+         const headers = {
+             headers: {'Content-Type' : 'application/json'}
+         };
+        const userInfo = localStorage.getItem('user');
+         const userObject= JSON.parse(userInfo);
+         const userId = userObject.id;
+         const url ='/users/' + userId +'/questions';
+         axios.post(url,  this.state, headers ).then ((res) => {
+             toast.success('Posted',{
+                 position: toast.POSITION.TOP_CENTER
+             });
+         }).catch((err) => {
+
+             toast.error('Error',{
+                 position: toast.POSITION.TOP_CENTER
+             });
+         })
+
+        this.props.history.goBack();
+
+
+    }
+    render() {
+        const isLoggedIn = ValidateUserAuthentication.isUserLoggedIn();
+        return(
+
+        <div>
+            <Navbar/>
+            <br/><br/>
+            <ToastContainer autoClose={3000}/>
+            <Form className='col-md-4'>
+                <legend className='col-md-4'>Post a question</legend>
+                <br/>
+                <Form.Input name='title'
+                            className='col-md-4' label='Title'
+                            required
+                            placeholder='Enter the title'
+                            onChange={this.handleChange.bind(this)}/>
+                <Form.Input name='body'
+                            className='col-md-4' label='Question'
+                            required
+                            placeholder='Enter your question'
+                            onChange={this.handleChange.bind(this)}/>
+                <Form.Input name='tags'
+                            className='col-md-4' label='Tags'
+                            required
+                            placeholder='Enter atleast one tag'
+                            onChange={this.handleChange.bind(this)}/>
+                <div className='col-md-4'>
+                    <Button type='submit'
+                            primary
+                            content='Submit'
+                            onClick={this.postQuestion.bind(this)}>
+                    </Button>
+                </div>
+            </Form>
+        </div>
+    );
+        }
+
 }
-
-Question.propTypes = {
-    Title: PropTypes.string,
-    Body: PropTypes.string
-};
-
-export default Question;
+export default Questions;
