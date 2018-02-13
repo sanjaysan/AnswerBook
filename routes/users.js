@@ -1,9 +1,9 @@
-const express = require('express');
-const router = express.Router();
-const config = require('../config/database');
-const passport = require('passport');
-const jwt = require('jsonwebtoken');
-const db = require('../models/db');
+const express = require('express')
+const router = express.Router()
+const config = require('../config/database')
+const passport = require('passport')
+const jwt = require('jsonwebtoken')
+const db = require('../models/db')
 
 // Register
 router.post('/register', function (req, res) {
@@ -14,24 +14,24 @@ router.post('/register', function (req, res) {
     email: req.body.email,
     username: req.body.username,
     password: req.body.password
-  };
+  }
 
   //OLDER METHOD USING ADDUSER Currently Not working as an instance method
   db.user.addUser(newUser, function (err, user) {
     if (err)
-      res.json({success: false, msg: 'Failed to register user'});
+      res.json({success: false, msg: 'Failed to register user'})
     else
       res.json({success: true, msg: 'User registered', userDetails: user})
-  });
-});
+  })
+})
 
 router.post('/login', function (req, res) {
   // Getting data from form
-  const username = req.body.username;
-  const password = req.body.password;
+  const username = req.body.username
+  const password = req.body.password
 
   db.user.getUserByUserName(username, function (err, user) {
-    if (err) throw err;
+    if (err) throw err
 
     if (!user) {
       return res.json({success: false, msg: 'User not found'})
@@ -39,13 +39,13 @@ router.post('/login', function (req, res) {
 
     // Comparing the entered pwd with that in the database
     db.user.comparePassword(password, user.password, function (err, isMatch) {
-      if (err) throw err;
+      if (err) throw err
 
       if (isMatch) {
         // User will be logged out after 10 minutes
         const token = jwt.sign({user: user.username}, config.secret, {
           expiresIn: 600
-        });
+        })
 
         // Sending the user details in the response
         res.json({
@@ -64,7 +64,7 @@ router.post('/login', function (req, res) {
       }
     })
   })
-});
+})
 
 // Authenticate
 
@@ -75,63 +75,64 @@ router.post('/login', function (req, res) {
 router.get('/dashboard', function (req, res) {
   db.question.findAll({
     include: [{
-          model: db.answer,
-          required: true,
-      }]
+      model: db.answer,
+      required: true,
+    }]
   }).then(function (questions) {
     const result = questions.map(function (question) {
       return Object.assign(
-          {},
-          {
-            question_id: question.id,
-            question_title: question.title,
-            question_body: question.body,
-            asked_by: question.userid,
-            answers: question.answers.map(function (answer) {
-              return Object.assign(
-                  {},
-                  {
-                    answer_id: answer.id,
-                    answer_body: answer.body,
-                    answered_by: answer.userid
-                  }
-              )
-            })
-          }
-      );
-    });
-    res.json(result);``
+        {},
+        {
+          question_id: question.id,
+          question_title: question.title,
+          question_body: question.body,
+          asked_by: question.userid,
+          answers: question.answers.map(function (answer) {
+            return Object.assign(
+              {},
+              {
+                answer_id: answer.id,
+                answer_body: answer.body,
+                answered_by: answer.userid
+              }
+            )
+          })
+        }
+      )
+    })
+    res.json(result);
+    ``
   })
-});
+})
 
 // Get the user information
 router.get('/profile', passport.authenticate('jwt', {session: false}),
-    function (req, res) {
-      res.json({user: req.user});
-    }
-);
+  function (req, res) {
+    res.json({user: req.user})
+  }
+)
 
 //Search by ID
 router.get('/:id([0-9]+)', passport.authenticate('jwt', {session: false}),
-    function (req, res) {
-      db.user.getUserById(req.params.id, function (err, user) {
-        if (err)
-          res.json({msg: 'User information not available'});
-        else
-          res.json({userDetails: user})
-      })
-    }
-);
+  function (req, res) {
+    db.user.getUserById(req.params.id, function (err, user) {
+      if (err)
+        res.json({msg: 'User information not available'})
+      else
+        res.json({userDetails: user})
+    })
+  }
+)
 
 // Search using emailID
 router.get('/:email([A-Za-z0-9_.]+@[A-Za-z.]+)', function (req, res) {
   db.user.getUserByEmailID(req.params.email, function (err, user) {
     if (err)
-      res.json({msg: 'User information not available'});
+      res.json({msg: 'User information not available'})
     else
       res.json({userDetails: user})
   })
-});
+})
 
 // Adds question with uid being userID
 router.post('/:uid/questions', function (req, res) {
@@ -139,21 +140,25 @@ router.post('/:uid/questions', function (req, res) {
     title: req.body.title,
     body: req.body.body,
     userid: req.params.uid
-  };
+  }
 
-  db.user.getUserByUserName(req.params.user, function (err, user) {
+  db.user.getUserById(req.params.uid, function (err, user) {
     if (err || !user)
-      res.json({msg: 'User information not available'});
+      res.json({msg: 'User information not available'})
     else {
       db.question.addQuestion(newQuestion, function (err, question) {
         if (err)
-          res.json({msg: 'Question could not be added'});
+          res.json({msg: 'Question could not be added'})
         else
-          res.json({success: true, questionDetails: question});
+          res.json({
+            success: true,
+            msg: 'Your question has been posted!',
+            questionDetails: question
+          })
       })
     }
   })
-});
+})
 
 // Get all questions posted by a user
 router.get('/:uid/questions', function (req, res) {
@@ -182,21 +187,21 @@ router.get('/:uid/questions', function (req, res) {
   }).then(function (users) {
     const userQuesObj = users.map(function (user) {
       return Object.assign(
-          {},
-          {
-            first_name: user.firstName,
-            last_name: user.lastName,
-            username: user.username,
-            questions: user.questions
-          }
+        {},
+        {
+          first_name: user.firstName,
+          last_name: user.lastName,
+          username: user.username,
+          questions: user.questions
+        }
       )
-    });
+    })
     if (userQuesObj && userQuesObj.length)
-      res.json(userQuesObj);
+      res.json(userQuesObj)
     else
       res.json({success: false, msg: 'User not found'})
   })
-});
+})
 
 // Post an answer to a question
 router.post('/:uid/questions/:qid', function (req, res) {
@@ -204,15 +209,15 @@ router.post('/:uid/questions/:qid', function (req, res) {
     body: req.body.body,
     questionid: req.params.qid,
     userid: req.params.uid
-  };
+  }
 
   db.answer.addAnswer(newAnswer, function (err, answer) {
     if (err)
-      res.json({msg: 'Answer could not be added'});
+      res.json({msg: 'Answer could not be added'})
     else
-      res.json({answerDetails: answer});
+      res.json({answerDetails: answer})
   })
-});
+})
 
 // Get the answers to a question
 router.get('/questions/:qid', function (req, res) {
@@ -223,13 +228,13 @@ router.get('/questions/:qid', function (req, res) {
         model: db.answer
       }]
   }).then(function (ans) {
-    res.json(ans);
+    res.json(ans)
   }).catch(function (err) {
     res.json({success: false, msg: err.message})
   })
-});
+})
 
-module.exports = router;
+module.exports = router
 
 
 
