@@ -3,14 +3,35 @@ import React, { Component } from 'react'
 import Navbar from '../navbar/navbar'
 import { Button, Form } from 'semantic-ui-react'
 import Notification from '../../services/Notification'
-import { AvailableTags } from '../../data/AvailableTags'
 import ValidateUserAuthentication from '../../services/ValidateUserAuthentication'
 
-class Questions extends Component {
+class PostQuestion extends Component {
+
+  state = {
+    availableTags: [],
+    currentValue: [],
+    question: {},
+    showQuestion: false
+  }
+
+  headers = {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': localStorage.getItem('id_token')
+    }
+  }
+
+  componentWillMount () {
+    axios.get('/tags', this.headers).then(tags => {
+      this.state.availableTags.push(...tags.data)
+    }).catch(err => {
+      console.log(err.message)
+    })
+  }
 
   validateFields () {
     const state = this.state
-    return !(!state.body || !state.title)
+    return !(!state.body || !state.title || state.currentValue.length === 0)
   }
 
   postQuestion (e) {
@@ -20,20 +41,25 @@ class Questions extends Component {
       return false
     }
 
-    const headers = {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': localStorage.getItem('id_token')
-      }
+    const question = {
+      title: this.state.title,
+      body: this.state.body,
+      tags: this.state.currentValue
     }
 
     const userId = JSON.parse(localStorage.getItem('user')).id
-    axios.post('/users/' + userId + '/questions', this.state, headers).then((res) => {
+    axios.post('/users/' + userId + '/questions', question, this.headers).then((res) => {
+      this.props.history.push({
+        pathname: '/questions/display',
+        state: {
+          question: Object.assign({}, res.data.questionDetails),
+          msg: res.data.msg
+        }
+      })
       Notification.showToast(res.data.msg, 'success')
     }).catch((err) => {
       Notification.showToast(err.message, 'error')
     })
-    this.props.history.goBack()
   }
 
   handleChange (e) {
@@ -42,8 +68,22 @@ class Questions extends Component {
     })
   }
 
-  handleTagAddition(e) {
-    AvailableTags.push({key: e.target.value, value: e.target.value, text: e.target.value})
+  handleDropDownChange (e, {value}) {
+    this.setState({
+      currentValue: value
+    })
+  }
+
+  handleTagAddition (e, {value}) {
+    let isTagPresent = this.state.availableTags.find(tag => {
+      return tag.key === value
+    })
+
+    if (!isTagPresent) {
+      this.setState({
+        availableTags: [...this.state.availableTags, {key: value, value: value, text: value}]
+      })
+    }
   }
 
   render () {
@@ -71,12 +111,13 @@ class Questions extends Component {
                                onChange={this.handleChange.bind(this)}/>
                 <Form.Dropdown name="tags"
                                className="col-md-4" label="Tags"
-                               multiple search selection
+                               required multiple search selection
                                allowAdditions
                                placeholder='Enter at least one tag'
-                               options={AvailableTags}
-                               onAddItem={this.handleTagAddition}
-                               onChange={this.handleChange.bind(this)}/>
+                               value={this.state.currentValue}
+                               options={this.state.availableTags}
+                               onAddItem={this.handleTagAddition.bind(this)}
+                               onChange={this.handleDropDownChange.bind(this)}/>
                 <div className='col-md-4'>
                   <Button type='submit'
                           primary
@@ -92,4 +133,4 @@ class Questions extends Component {
   }
 }
 
-export default Questions
+export default PostQuestion

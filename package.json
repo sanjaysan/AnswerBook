@@ -4,7 +4,7 @@
   "description": "Q & A forum for organizations",
   "main": "app.js",
   "scripts": {
-    "server": "node app",
+    "server": "nodemon",
     "client": "npm start --prefix answerbookui",
     "start": "concurrently \"npm run server\" \"npm run client\"",
     "dev": "node app",

@@ -1,4 +1,3 @@
-const db = require('../models/db');
 module.exports = function (sequelize, DataTypes) {
 
   const questions = sequelize.define('questions', {
@@ -17,21 +16,21 @@ module.exports = function (sequelize, DataTypes) {
     },
     score: {
       type: DataTypes.INTEGER,
-      min: 0,
-      allowNull: true
+      defaultValue: 0
     },
     answered: {
       type: DataTypes.BOOLEAN,
-      allowNull: true
+      allowNull: true,
+      defaultValue: false
     }
-  });
+  })
 
   // Post a question
   questions.addQuestion = function (newQuestion, callback) {
     questions.create(newQuestion).then(function (question) {
-      return callback(null, question);
+      return callback(null, question)
     })
-  };
+  }
 
   // Get question by its question id
   questions.getQuestionById = function (id, callback) {
@@ -40,11 +39,11 @@ module.exports = function (sequelize, DataTypes) {
         id: id
       }
     }).then(function (question) {
-      return callback(null, question);
+      return callback(null, question)
     }).catch(function (err) {
-      return callback(err, null);
+      return callback(err, null)
     })
-  };
+  }
 
-  return questions;
-};
+  return questions
+}

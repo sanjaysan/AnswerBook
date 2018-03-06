@@ -13,7 +13,7 @@ module.exports = function (passport) {
 
   // Gives the JWT payload
   passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
-    db.user.getUserByUserName(jwt_payload.user, function (err, user) {
+    db.users.getUserByUserName(jwt_payload.user, function (err, user) {
       if (err) {
         return done(err, false);
       }

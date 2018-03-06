@@ -17,7 +17,7 @@ router.post('/register', function (req, res) {
   }
 
   //OLDER METHOD USING ADDUSER Currently Not working as an instance method
-  db.user.addUser(newUser, function (err, user) {
+  db.users.addUser(newUser, function (err, user) {
     if (err)
       res.json({success: false, msg: 'Failed to register user'})
     else
@@ -30,7 +30,7 @@ router.post('/login', function (req, res) {
   const username = req.body.username
   const password = req.body.password
 
-  db.user.getUserByUserName(username, function (err, user) {
+  db.users.getUserByUserName(username, function (err, user) {
     if (err) throw err
 
     if (!user) {
@@ -38,7 +38,7 @@ router.post('/login', function (req, res) {
     }
 
     // Comparing the entered pwd with that in the database
-    db.user.comparePassword(password, user.password, function (err, isMatch) {
+    db.users.comparePassword(password, user.password, function (err, isMatch) {
       if (err) throw err
 
       if (isMatch) {
@@ -73,9 +73,9 @@ router.post('/login', function (req, res) {
 // JwtStrategy method in passport.js, authenticates the
 // user and returns the user details
 router.get('/dashboard', function (req, res) {
-  db.question.findAll({
+  db.questions.findAll({
     include: [{
-      model: db.answer,
+      model: db.answers,
       required: true,
     }]
   }).then(function (questions) {
@@ -115,9 +115,9 @@ router.get('/profile', passport.authenticate('jwt', {session: false}),
 //Search by ID
 router.get('/:id([0-9]+)', passport.authenticate('jwt', {session: false}),
   function (req, res) {
-    db.user.getUserById(req.params.id, function (err, user) {
+    db.users.getUserById(req.params.id, function (err, user) {
       if (err)
-        res.json({msg: 'User information not available'})
+        res.json({success: false, msg: 'User information not available'})
       else
         res.json({userDetails: user})
     })
@@ -126,9 +126,9 @@ router.get('/:id([0-9]+)', passport.authenticate('jwt', {session: false}),
 
 // Search using emailID
 router.get('/:email([A-Za-z0-9_.]+@[A-Za-z.]+)', function (req, res) {
-  db.user.getUserByEmailID(req.params.email, function (err, user) {
+  db.users.getUserByEmailID(req.params.email, function (err, user) {
     if (err)
-      res.json({msg: 'User information not available'})
+      res.json({success: false, msg: 'User information not available'})
     else
       res.json({userDetails: user})
   })
@@ -142,19 +142,59 @@ router.post('/:uid/questions', function (req, res) {
     userid: req.params.uid
   }
 
-  db.user.getUserById(req.params.uid, function (err, user) {
-    if (err || !user)
-      res.json({msg: 'User information not available'})
-    else {
-      db.question.addQuestion(newQuestion, function (err, question) {
+  db.users.getUserById(req.params.uid, function (err, user) {
+    if (err || !user) {
+      res.json({success: false, msg: 'User information not available'})
+    } else {
+
+      // Setting the askedBy field with the username
+      newQuestion['askedBy'] = user.username
+
+      // Inserting the question
+      db.questions.addQuestion(newQuestion, function (err, question) {
         if (err)
-          res.json({msg: 'Question could not be added'})
-        else
+          res.json({success: false, msg: 'Question could not be added'})
+        else {
+          // Inserting tags if question insertion is successful
+          if (req.body.tags) {
+            req.body.tags.map(function (tag) {
+              db.tags.getTagByName(tag, function (err, returnedTag) {
+                if (err) throw err
+                else {
+                  // If tag is not already present, then insert it
+                  // into the tags table
+                  if (!returnedTag) {
+                    db.tags.createTag(Object.assign({}, {name: tag}), function (err, createdTag) {
+                      if (err)
+                        res.json({success: false, msg: 'Could not insert tag'})
+                      else {
+                        // Associating the questionId with the newly created tagId
+                        // by inserting a (questionId, tagId) entry in the
+                        // "questiontag" table
+                        question.addTag(createdTag.id).catch(function (err) {
+                          console.log(err)
+                        })
+                      }
+                    })
+                  } else {
+                    // Associating the questionId with the existing tagId
+                    question.addTag(returnedTag.id).catch(function (err) {
+                      console.log(err)
+                    })
+                  }
+                }
+              })
+            })
+          }
+
+          // Returning a successful response
           res.json({
             success: true,
             msg: 'Your question has been posted!',
-            questionDetails: question
+            questionDetails: question,
+            tags: req.body.tags
           })
+        }
       })
     }
   })
@@ -162,11 +202,11 @@ router.post('/:uid/questions', function (req, res) {
 
 // Get all questions posted by a user
 router.get('/:uid/questions', function (req, res) {
-  // db.user.getUserById(req.params.uid, function (err, user) {
+  // db.users.getUserById(req.params.uid, function (err, user) {
   //   if (err || !user)
   //     res.json({success: false, msg: 'User not found'})
   //   else {
-  //     db.question.findAll({
+  //     db.questions.findAll({
   //       where: {
   //         userid: req.params.uid
   //       }
@@ -177,11 +217,11 @@ router.get('/:uid/questions', function (req, res) {
   //     })
   //   }
   // });
-  db.user.findAll({
+  db.users.findAll({
     where: {id: req.params.uid},
     include: [
       {
-        model: db.question,
+        model: db.questions,
         required: true
       }]
   }).then(function (users) {
@@ -208,24 +248,37 @@ router.post('/:uid/questions/:qid', function (req, res) {
   const newAnswer = {
     body: req.body.body,
     questionid: req.params.qid,
-    userid: req.params.uid
+    userid: req.params.uid,
+    answeredBy: req.body.answeredBy
   }
 
-  db.answer.addAnswer(newAnswer, function (err, answer) {
-    if (err)
-      res.json({msg: 'Answer could not be added'})
-    else
-      res.json({answerDetails: answer})
+  db.users.getUserById(req.params.uid, function (err, user) {
+    if (err || !user)
+      res.json({success: false, msg: 'User not found'})
+    else {
+      db.questions.getQuestionById(req.params.qid, function (err, question) {
+        if (err || !question)
+          res.json({success: false, msg: err.message})
+        else {
+          db.answers.addAnswer(newAnswer, function (err, answer) {
+            if (err)
+              res.json({success: false, msg: err.message})
+            else
+              res.json({answerDetails: answer})
+          })
+        }
+      })
+    }
   })
 })
 
 // Get the answers to a question
 router.get('/questions/:qid', function (req, res) {
-  db.question.findAll({
+  db.questions.findAll({
     where: {id: req.params.qid},
     include: [
       {
-        model: db.answer
+        model: db.answers
       }]
   }).then(function (ans) {
     res.json(ans)
@@ -235,7 +288,3 @@ router.get('/questions/:qid', function (req, res) {
 })
 
 module.exports = router
-
-
-
-
